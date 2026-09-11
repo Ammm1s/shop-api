@@ -4,6 +4,8 @@ import com.amir.shop.dto.OrderRequest;
 import com.amir.shop.dto.OrderResponse;
 import com.amir.shop.service.OrderService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;љ
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -42,4 +44,11 @@ public class OrderController {
         return service.cancelOrder(id, principal.getName());
     }
 
+    @GetMapping()
+    public Page<OrderResponse> getUserOrders(
+            Principal principal,
+            Pageable pageable
+    ) {
+        return service.getUserOrders(principal.getName(), pageable);
+    }
 }

@@ -34,7 +34,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST, "/orders").authenticated()
                 .requestMatchers(HttpMethod.POST, "/products").hasRole(Role.ADMIN.name())
                 .requestMatchers(HttpMethod.POST, "/categories").hasRole(Role.ADMIN.name())
-                .requestMatchers(HttpMethod.GET, "/orders/*").authenticated()
+                .requestMatchers(HttpMethod.GET, "/orders/**").authenticated()
                 .requestMatchers(HttpMethod.POST, "/orders/*/cancel").authenticated()
                 .anyRequest().denyAll()
         );
@@ -55,7 +55,12 @@ public class SecurityConfig {
                     }
                     """);
                 })
-                .accessDeniedHandler((request, response, accessDeniedException) -> {
+                .accessDeniedHandler((
+                        request,
+                        response,
+                        accessDeniedException
+                ) -> {
+
                     response.setStatus(HttpStatus.FORBIDDEN.value());
                     response.setContentType("application/json");
                     response.setCharacterEncoding("UTF-8");

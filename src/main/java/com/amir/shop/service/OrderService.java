@@ -9,6 +9,8 @@ import com.amir.shop.repository.OrderRepository;
 import com.amir.shop.repository.ProductRepository;
 import com.amir.shop.repository.UserRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -187,5 +189,12 @@ public class OrderService {
 
         orderRepository.save(order);
         return toResponse(order);
+    }
+
+    @Transactional
+    public Page<OrderResponse> getUserOrders(String email, Pageable pageable) {
+        return orderRepository
+                .findByUser_Email(email, pageable)
+                .map(this::toResponse);
     }
 }
