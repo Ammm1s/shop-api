@@ -1,0 +1,31 @@
+services:
+  db:
+    image: postgres:18
+    environment:
+      POSTGRES_DB: shop
+      POSTGRES_USER: shop_user
+      POSTGRES_PASSWORD: ${SHOP_DB_PASSWORD:?Укажи SHOP_DB_PASSWORD}
+    ports:
+      - "127.0.0.1:5433:5432"
+    volumes:
+      - shop_pg_data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U shop_user -d shop"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  app:
+    build: .
+    image: shop-app
+    environment:
+      SHOP_DB_PASSWORD: ${SHOP_DB_PASSWORD:?Укажи SHOP_DB_PASSWORD}
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/shop
+    ports:
+      - "127.0.0.1:8080:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  shop_pg_data:
