@@ -39,9 +39,9 @@ public class OrderService {
     }
     private OrderResponse toResponse(Order order) {
         List<OrderItemResponse> itemResponses = new ArrayList<>();
+
         for (OrderItem item : order.getItems()) {
             itemResponses.add(new OrderItemResponse(
-
                     item.getProduct().getId(),
                     item.getQuantity(),
                     item.getPrice()

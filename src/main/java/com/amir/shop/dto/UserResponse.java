@@ -1,18 +1,22 @@
 package com.amir.shop.dto;
 
+import com.amir.shop.entity.Role;
+
 public class UserResponse {
 
     private Integer userId;
     private String name;
     private String email;
+    private Role role;
 
     public UserResponse() {
     }
 
-    public UserResponse(Integer userId, String name, String email) {
+    public UserResponse(Integer userId, String name, String email, Role role) {
         this.userId = userId;
         this.name = name;
         this.email = email;
+        this.role = role;
     }
 
     public Integer getUserId() {
@@ -34,5 +38,12 @@ public class UserResponse {
     }
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+    public void setRole(Role role) {
+        this.role = role;
     }
 }

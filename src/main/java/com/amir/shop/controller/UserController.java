@@ -5,10 +5,14 @@ import com.amir.shop.dto.UserResponse;
 import com.amir.shop.service.UserService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 
+@Validated
 @RestController
 @RequestMapping("/users")
 public class UserController {
@@ -32,5 +36,15 @@ public class UserController {
     @GetMapping("/me")
     public UserResponse getCurrentUser(Principal principal) {
         return service.getCurrentUser(principal.getName());
+    }
+
+    @GetMapping
+    public Page<UserResponse> getAllUsers(Pageable pageable) {
+        return service.getAllUsers(pageable);
+    }
+
+    @DeleteMapping("/{id}")
+    public UserResponse deleteUserById(@PathVariable @Positive Integer id) {
+        return service.deleteUserById(id);
     }
 }

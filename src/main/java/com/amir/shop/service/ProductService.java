@@ -58,7 +58,6 @@ public class ProductService {
         }
 
         Product product = new Product(
-
                 request.getName(),
                 request.getDescription(),
                 request.getPrice(),
@@ -105,14 +104,12 @@ public class ProductService {
     }
 
     public Page<Product> filterProductsByPrice(
-
             BigDecimal minPrice,
             BigDecimal maxPrice,
             Pageable pageable
 
     ) {
         return productRepository.findByPriceGreaterThanEqualAndPriceLessThanEqual(
-
                 minPrice,
                 maxPrice,
                 pageable

@@ -3,7 +3,11 @@ package com.amir.shop.service;
 import com.amir.shop.dto.UserRequest;
 import com.amir.shop.dto.UserResponse;
 import com.amir.shop.entity.User;
+import com.amir.shop.repository.OrderRepository;
 import com.amir.shop.repository.UserRepository;
+import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -14,17 +18,26 @@ public class UserService {
 
     private final UserRepository repository;
     private final PasswordEncoder passwordEncoder;
+    private final OrderRepository orderRepository;
 
-    public UserService(UserRepository repository, PasswordEncoder passwordEncoder) {
+    public UserService(
+            UserRepository repository,
+            PasswordEncoder passwordEncoder,
+            OrderRepository orderRepository
+    ) {
+
         this.repository = repository;
         this.passwordEncoder = passwordEncoder;
+        this.orderRepository = orderRepository;
     }
 
     private UserResponse toResponse(User user) {
+
         return new UserResponse(
                 user.getUserId(),
                 user.getName(),
-                user.getEmail()
+                user.getEmail(),
+                user.getRole()
         );
     }
 
@@ -33,15 +46,12 @@ public class UserService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Пользователь с таким email уже существует");
         }
 
-        User user = new User(
-
+        User savedUser = repository.save(new User(
                 null,
                 request.getName(),
                 request.getEmail(),
-                passwordEncoder.encode(request.getPassword())
+                passwordEncoder.encode(request.getPassword()))
         );
-
-        User savedUser = repository.save(user);
 
         return toResponse(savedUser);
     }
@@ -62,6 +72,32 @@ public class UserService {
                         HttpStatus.NOT_FOUND,
                         "Пользователь не найден"
                 ));
+
+        return toResponse(user);
+    }
+
+    public Page<UserResponse> getAllUsers(Pageable pageable) {
+        return repository
+                .findAll(pageable)
+                .map(this::toResponse);
+    }
+
+    @Transactional
+    public UserResponse deleteUserById(Integer id) {
+        User user = repository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Пользователь не найден"
+                ));
+
+        if (orderRepository.existsByUser_UserId(id)) {
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT,
+                    "Нельзя удалить пользователя, у которого есть заказы"
+            );
+        }
+
+        repository.delete(user);
 
         return toResponse(user);
     }

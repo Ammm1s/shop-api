@@ -19,4 +19,6 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
 
     Page<Order> findByUser_Email(String email, Pageable pageable);
 
+    boolean existsByUser_UserId(Integer userId);
+
 }
