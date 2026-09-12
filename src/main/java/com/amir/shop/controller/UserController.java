@@ -7,6 +7,8 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
+
 @RestController
 @RequestMapping("/users")
 public class UserController {
@@ -25,5 +27,10 @@ public class UserController {
     @GetMapping("/{id}")
     public UserResponse getUserById(@PathVariable @Positive Integer id) {
         return service.getUserById(id);
+    }
+
+    @GetMapping("/me")
+    public UserResponse getCurrentUser(Principal principal) {
+        return service.getCurrentUser(principal.getName());
     }
 }

@@ -20,6 +20,14 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
+    private UserResponse toResponse(User user) {
+        return new UserResponse(
+                user.getUserId(),
+                user.getName(),
+                user.getEmail()
+        );
+    }
+
     public UserResponse register(UserRequest request) {
         if (repository.existsByEmail(request.getEmail())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Пользователь с таким email уже существует");
@@ -35,14 +43,7 @@ public class UserService {
 
         User savedUser = repository.save(user);
 
-        UserResponse response = new UserResponse(
-
-                savedUser.getUserId(),
-                savedUser.getName(),
-                savedUser.getEmail()
-        );
-
-        return response;
+        return toResponse(savedUser);
     }
 
     public UserResponse getUserById(Integer id) {
@@ -51,11 +52,18 @@ public class UserService {
                         HttpStatus.NOT_FOUND,
                         "Пользователь не найден"
                 ));
-        return new UserResponse(
-                user.getUserId(),
-                user.getName(),
-                user.getEmail()
-        );
+
+        return toResponse(user);
+    }
+
+    public UserResponse getCurrentUser(String email) {
+        User user = repository.findByEmail(email)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Пользователь не найден"
+                ));
+
+        return toResponse(user);
     }
 
 }
