@@ -36,6 +36,8 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST, "/categories").hasRole(Role.ADMIN.name())
                 .requestMatchers(HttpMethod.GET, "/orders/**").authenticated()
                 .requestMatchers(HttpMethod.POST, "/orders/*/cancel").authenticated()
+                .requestMatchers(HttpMethod.DELETE, "/products/*").hasRole(Role.ADMIN.name())
+                .requestMatchers(HttpMethod.PUT, "/products/*").hasRole(Role.ADMIN.name())
                 .anyRequest().denyAll()
         );
 
