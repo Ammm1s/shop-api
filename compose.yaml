@@ -20,6 +20,7 @@ services:
     image: shop-app
     environment:
       SHOP_DB_PASSWORD: ${SHOP_DB_PASSWORD:?Укажи SHOP_DB_PASSWORD}
+      SHOP_JWT_SECRET: ${SHOP_JWT_SECRET:?Укажи SHOP_JWT_SECRET}
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/shop
     ports:
       - "127.0.0.1:8080:8080"
