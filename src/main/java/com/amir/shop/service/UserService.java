@@ -2,6 +2,7 @@ package com.amir.shop.service;
 
 import com.amir.shop.dto.UserRequest;
 import com.amir.shop.dto.UserResponse;
+import com.amir.shop.entity.Role;
 import com.amir.shop.entity.User;
 import com.amir.shop.repository.OrderRepository;
 import com.amir.shop.repository.UserRepository;
@@ -90,6 +91,13 @@ public class UserService {
                         "Пользователь не найден"
                 ));
 
+        if (user.getRole() == Role.OWNER) {
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT,
+                    "Нельзя удалить владельца"
+            );
+        }
+
         if (orderRepository.existsByUser_UserId(id)) {
             throw new ResponseStatusException(
                     HttpStatus.CONFLICT,
@@ -102,4 +110,37 @@ public class UserService {
         return toResponse(user);
     }
 
+    public UserResponse updateRole(Integer id, Role newRole) {
+
+        User user = repository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Пользователь не найден"
+                ));
+
+        if (user.getRole() == Role.OWNER) {
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT,
+                    "Нельзя изменить роль владельца"
+            );
+        }
+
+        if (user.getRole() == newRole) {
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT,
+                    "Пользователь уже имеет эту роль"
+            );
+        }
+        if (newRole == Role.OWNER) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Нельзя назначить роль владельца"
+            );
+        }
+
+        user.setRole(newRole);
+        repository.save(user);
+
+        return toResponse(user);
+    }
 }
