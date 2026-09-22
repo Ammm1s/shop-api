@@ -1,6 +1,7 @@
 package com.amir.shop.dto;
 
 import jakarta.validation.constraints.*;
+import org.hibernate.validator.constraints.URL;
 
 import java.math.BigDecimal;
 
@@ -23,6 +24,9 @@ public class ProductCreateRequest {
     @Min(value = 0, message = "Число должно быть неотрицательным")
     private Integer stock;
 
+    @URL(protocol = "https", message = "Укажи HTTPS-ссылку на изображение")
+    private String imageUrl;
+
     public ProductCreateRequest() {
     }
 
@@ -40,6 +44,9 @@ public class ProductCreateRequest {
     }
     public Integer getCategoryId() {
         return categoryId;
+    }
+    public String getImageUrl() {
+        return imageUrl;
     }
 
     public void setCategoryId(Integer categoryId) {

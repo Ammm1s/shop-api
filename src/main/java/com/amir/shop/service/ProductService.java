@@ -61,7 +61,8 @@ public class ProductService {
                 request.getName(),
                 request.getDescription(),
                 request.getPrice(),
-                request.getStock()
+                request.getStock(),
+                request.getImageUrl()
         );
 
         product.setCategory(category);
@@ -95,6 +96,7 @@ public class ProductService {
         product.get().setDescription(request.getDescription());
         product.get().setPrice(request.getPrice());
         product.get().setStock(request.getStock());
+        product.get().setImageUrl(request.getImageUrl());
 
         return productRepository.save(product.get());
     }

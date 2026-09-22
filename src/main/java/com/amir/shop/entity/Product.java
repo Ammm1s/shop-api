@@ -28,17 +28,20 @@ public class Product {
     @Min(0)
     private Integer stock;
 
+    private String imageUrl;
+
     @ManyToOne
     private Category category;
 
     public Product() {
     }
 
-    public Product(String name, String description, BigDecimal price, Integer stock) {
+    public Product(String name, String description, BigDecimal price, Integer stock, String imageUrl) {
         this.name = name;
         this.description = description;
         this.price = price;
         this.stock = stock;
+        this.imageUrl = imageUrl;
     }
 
     public Integer getId() {
@@ -56,6 +59,9 @@ public class Product {
     public Integer getStock() {
         return stock;
     }
+    public String getImageUrl() {
+        return imageUrl;
+    }
 
     public void setName(String name) {
         this.name = name;
@@ -68,6 +74,9 @@ public class Product {
     }
     public void setStock(Integer stock) {
         this.stock = stock;
+    }
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 
     public Category getCategory() {
