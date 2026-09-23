@@ -1,6 +1,6 @@
 package com.amir.shop.controller;
 
-import com.amir.shop.dto.CategoryRequest;
+import com.amir.shop.dto.request.CategoryRequest;
 import com.amir.shop.entity.Category;
 import com.amir.shop.service.CategoryService;
 import jakarta.validation.Valid;

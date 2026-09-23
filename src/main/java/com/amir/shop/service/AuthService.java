@@ -1,7 +1,7 @@
 package com.amir.shop.service;
 
-import com.amir.shop.dto.LoginRequest;
-import com.amir.shop.dto.LoginResponse;
+import com.amir.shop.dto.request.LoginRequest;
+import com.amir.shop.dto.response.LoginResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;

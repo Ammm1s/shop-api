@@ -1,4 +1,4 @@
-package com.amir.shop.dto;
+package com.amir.shop.dto.request;
 
 import com.amir.shop.entity.Role;
 import jakarta.validation.constraints.NotNull;

@@ -1,4 +1,4 @@
-package com.amir.shop.dto;
+package com.amir.shop.dto.request;
 
 import com.amir.shop.entity.OrderStatus;
 import jakarta.validation.constraints.NotNull;

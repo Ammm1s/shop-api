@@ -1,8 +1,8 @@
 package com.amir.shop.controller;
 
-import com.amir.shop.dto.OrderRequest;
-import com.amir.shop.dto.OrderResponse;
-import com.amir.shop.dto.OrderStatusUpdateRequest;
+import com.amir.shop.dto.request.OrderRequest;
+import com.amir.shop.dto.response.OrderResponse;
+import com.amir.shop.dto.request.OrderStatusUpdateRequest;
 import com.amir.shop.service.OrderService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;

@@ -1,8 +1,8 @@
 package com.amir.shop.controller;
 
-import com.amir.shop.dto.RoleUpdateRequest;
-import com.amir.shop.dto.UserRequest;
-import com.amir.shop.dto.UserResponse;
+import com.amir.shop.dto.request.RoleUpdateRequest;
+import com.amir.shop.dto.request.UserRequest;
+import com.amir.shop.dto.response.UserResponse;
 import com.amir.shop.service.UserService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;

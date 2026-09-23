@@ -1,7 +1,7 @@
 package com.amir.shop.service;
 
-import com.amir.shop.dto.UserRequest;
-import com.amir.shop.dto.UserResponse;
+import com.amir.shop.dto.request.UserRequest;
+import com.amir.shop.dto.response.UserResponse;
 import com.amir.shop.entity.Role;
 import com.amir.shop.entity.User;
 import com.amir.shop.repository.OrderRepository;

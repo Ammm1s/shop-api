@@ -1,4 +1,4 @@
-package com.amir.shop.dto;
+package com.amir.shop.dto.response;
 
 import java.math.BigDecimal;
 

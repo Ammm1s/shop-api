@@ -1,6 +1,6 @@
 package com.amir.shop.service;
 
-import com.amir.shop.dto.CategoryRequest;
+import com.amir.shop.dto.request.CategoryRequest;
 import com.amir.shop.entity.Category;
 import com.amir.shop.repository.CategoryRepository;
 import org.springframework.stereotype.Service;

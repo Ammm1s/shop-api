@@ -1,7 +1,7 @@
 package com.amir.shop.controller;
 
-import com.amir.shop.dto.LoginRequest;
-import com.amir.shop.dto.LoginResponse;
+import com.amir.shop.dto.request.LoginRequest;
+import com.amir.shop.dto.response.LoginResponse;
 import com.amir.shop.service.AuthService;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.PostMapping;

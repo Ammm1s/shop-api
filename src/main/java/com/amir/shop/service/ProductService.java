@@ -1,7 +1,7 @@
 package com.amir.shop.service;
 
-import com.amir.shop.dto.ProductCreateRequest;
-import com.amir.shop.dto.ProductUpdateRequest;
+import com.amir.shop.dto.request.ProductCreateRequest;
+import com.amir.shop.dto.request.ProductUpdateRequest;
 import com.amir.shop.entity.Category;
 import com.amir.shop.entity.Product;
 import com.amir.shop.repository.CategoryRepository;

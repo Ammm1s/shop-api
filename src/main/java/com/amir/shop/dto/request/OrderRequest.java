@@ -1,4 +1,4 @@
-package com.amir.shop.dto;
+package com.amir.shop.dto.request;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;

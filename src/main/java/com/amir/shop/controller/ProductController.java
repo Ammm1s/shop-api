@@ -1,7 +1,7 @@
 package com.amir.shop.controller;
 
-import com.amir.shop.dto.ProductCreateRequest;
-import com.amir.shop.dto.ProductUpdateRequest;
+import com.amir.shop.dto.request.ProductCreateRequest;
+import com.amir.shop.dto.request.ProductUpdateRequest;
 import com.amir.shop.entity.Product;
 import com.amir.shop.service.ProductService;
 import jakarta.validation.Valid;

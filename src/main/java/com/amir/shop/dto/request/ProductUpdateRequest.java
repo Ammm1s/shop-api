@@ -1,19 +1,14 @@
-package com.amir.shop.dto;
+package com.amir.shop.dto.request;
 
 import jakarta.validation.constraints.*;
 import org.hibernate.validator.constraints.URL;
 
 import java.math.BigDecimal;
 
-public class ProductCreateRequest {
-
-    @NotNull(message = "Укажите категорию")
-    @Positive(message = "ID категории должен быть положительным")
-    private Integer categoryId;
+public class ProductUpdateRequest {
 
     @NotBlank(message = "Название не может быть пустым")
     private String name;
-
     private String description;
 
     @NotNull(message = "Число не может быть пустым")
@@ -21,13 +16,13 @@ public class ProductCreateRequest {
     private BigDecimal price;
 
     @NotNull(message = "Число не может быть пустым")
-    @Min(value = 0, message = "Число должно быть неотрицательным")
+    @Min(value = 0, message = "Остаток должен быть неотрицательным")
     private Integer stock;
 
     @URL(protocol = "https", message = "Укажи HTTPS-ссылку на изображение")
     private String imageUrl;
 
-    public ProductCreateRequest() {
+    public ProductUpdateRequest() {
     }
 
     public String getName() {
@@ -39,17 +34,10 @@ public class ProductCreateRequest {
     public BigDecimal getPrice() {
         return price;
     }
-    public int getStock() {
+    public Integer getStock() {
         return stock;
-    }
-    public Integer getCategoryId() {
-        return categoryId;
     }
     public String getImageUrl() {
         return imageUrl;
-    }
-
-    public void setCategoryId(Integer categoryId) {
-        this.categoryId = categoryId;
     }
 }
