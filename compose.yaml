@@ -22,6 +22,8 @@ services:
       SHOP_DB_PASSWORD: ${SHOP_DB_PASSWORD:?Укажи SHOP_DB_PASSWORD}
       SHOP_JWT_SECRET: ${SHOP_JWT_SECRET:?Укажи SHOP_JWT_SECRET}
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/shop
+    healthcheck:
+      test: [ "CMD", "curl", "-fsS", "http://127.0.0.1:8080/actuator/health" ]
     ports:
       - "127.0.0.1:8080:8080"
     depends_on:

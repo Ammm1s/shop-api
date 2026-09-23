@@ -9,6 +9,13 @@ export function initAdmin({state,api,loadCatalog,esc,money,icon,empty,toast,open
   let users=[];
   let usersLoading=false;
   let usersError='';
+  let orders=[];
+  let ordersPage=0;
+  let ordersTotalPages=0;
+  let ordersLoading=false;
+  let ordersError='';
+  let ordersRequest=0;
+  let pendingOrder=null;
 
   const authorized=()=>['ADMIN','OWNER'].includes(state.user?.role);
   const isOwner=()=>state.user?.role==='OWNER';
@@ -55,13 +62,15 @@ export function initAdmin({state,api,loadCatalog,esc,money,icon,empty,toast,open
     document.querySelectorAll('[data-admin-tab]').forEach(element=>{
       element.setAttribute('aria-pressed',String(element.dataset.adminTab===tab));
     });
-    $('#admin-create').hidden=tab==='users';
-    if(tab!=='users'){
+    $('#admin-create').hidden=tab==='users'||tab==='orders';
+    if(tab==='products'||tab==='categories'){
       $('#admin-create').innerHTML=icon('plus')+(tab==='products'?' Добавить товар':' Новая категория');
     }
+    $('#admin-search').hidden=tab==='orders';
     $('#admin-search').placeholder=tab==='users'?'Поиск по имени или email':'Поиск по названию';
 
     if(tab==='users')renderUsers();
+    else if(tab==='orders')renderOrders();
     else renderCatalogSection();
   }
 
@@ -126,6 +135,66 @@ export function initAdmin({state,api,loadCatalog,esc,money,icon,empty,toast,open
     }finally{
       usersLoading=false;render();
     }
+  }
+
+  function renderOrders(){
+    if(ordersLoading){
+      $('#admin-list').innerHTML='<div class="loading-card">Загружаем заказы…</div>';
+      return;
+    }
+    if(ordersError){
+      $('#admin-list').innerHTML=empty('Не удалось загрузить заказы',ordersError,'<button class="secondary-button" data-orders-retry>Повторить</button>');
+      return;
+    }
+    if(!orders.length){
+      $('#admin-list').innerHTML=empty('Заказов пока нет','Новые заказы покупателей появятся здесь.');
+      return;
+    }
+    const labels={NEW:'Новый',PAID:'Оплачен',SHIPPED:'Отправлен',CANCELLED:'Отменён'};
+    const rows=orders.map(order=>{
+      const next=order.status==='NEW'?'PAID':order.status==='PAID'?'SHIPPED':null;
+      const action=next?`<button class="text-button" data-admin-order-status="${esc(order.id)}">${next==='PAID'?'Отметить оплату':'Отметить отправку'}</button>`:'<span class="muted">Нет действий</span>';
+      const date=order.createdAt?new Date(order.createdAt).toLocaleString('ru-RU',{dateStyle:'medium',timeStyle:'short'}):'Дата неизвестна';
+      const items=(order.items||[]).map(item=>{
+        const product=state.products.find(product=>product.id===item.productId);
+        return `${esc(product?.name||`Товар №${item.productId}`)} × ${esc(item.quantity)}`;
+      }).join(', ')||'Товары не указаны';
+      return `<tr><td><strong>Заказ №${esc(order.id)}</strong><small>${esc(date)}</small></td><td><span class="status ${esc(order.status)}">${esc(labels[order.status]||order.status)}</span></td><td class="admin-order-items">${items}</td><td class="admin-price">${money(order.totalPrice)}</td><td>${action}</td></tr>`;
+    }).join('');
+    const pages=ordersTotalPages>1?`<div class="admin-pages"><button class="secondary-button" data-orders-page="${ordersPage-1}" ${ordersPage===0?'disabled':''}>Назад</button><span>Страница ${ordersPage+1} из ${ordersTotalPages}</span><button class="secondary-button" data-orders-page="${ordersPage+1}" ${ordersPage+1>=ordersTotalPages?'disabled':''}>Далее</button></div>`:'';
+    $('#admin-list').innerHTML=`<div class="admin-table-wrap" tabindex="0" role="region" aria-label="Таблица заказов"><table class="admin-table admin-orders-table"><thead><tr><th scope="col">Заказ</th><th scope="col">Статус</th><th scope="col">Товары</th><th scope="col">Сумма</th><th scope="col">Действие</th></tr></thead><tbody>${rows}</tbody></table></div>${pages}`;
+  }
+
+  async function loadOrders(page=0){
+    if(!authorized()||state.mode!=='live')return;
+    const requestId=++ordersRequest;
+    ordersLoading=true;ordersError='';render();
+    try{
+      const data=await api(`/orders/admin?page=${page}&size=10&sort=createdAt,desc`,{auth:true});
+      if(requestId!==ordersRequest)return;
+      orders=Array.isArray(data)?data:(data?.content||[]);
+      ordersPage=page;
+      ordersTotalPages=data?.page?.totalPages??data?.totalPages??1;
+    }catch(error){
+      if(requestId!==ordersRequest)return;
+      ordersError=[400,404].includes(error.status)?'Список заказов ещё не подключён на сервере.':error.message;
+    }finally{
+      if(requestId===ordersRequest){ordersLoading=false;render();}
+    }
+  }
+
+  function showOrderStatus(id){
+    requireAccess();if(saving)return;
+    const order=orders.find(item=>item.id===id);
+    if(!order)return;
+    const status=order.status==='NEW'?'PAID':order.status==='PAID'?'SHIPPED':null;
+    if(!status)return;
+    pendingOrder={id,status};
+    $('#admin-order-title').textContent=status==='PAID'?'Отметить заказ оплаченным?':'Отметить заказ отправленным?';
+    $('#admin-order-description').textContent=`Заказ №${id} перейдёт в статус «${status==='PAID'?'Оплачен':'Отправлен'}».`;
+    $('#admin-order-hint').textContent=status==='PAID'?'Убедись, что оплата получена. Эта кнопка только меняет статус заказа и не принимает платёж.':'Подтверждай отправку после передачи заказа в доставку.';
+    $('#admin-order-submit').textContent=status==='PAID'?'Подтвердить оплату':'Подтвердить отправку';
+    $('#admin-order-error').textContent='';openDialog('admin-order-dialog');
   }
 
   function showCategory(){
@@ -246,11 +315,24 @@ export function initAdmin({state,api,loadCatalog,esc,money,icon,empty,toast,open
     });
   });
 
+  $('#admin-order-submit').addEventListener('click',()=>{
+    const change=pendingOrder;if(!change)return;
+    save({
+      buttonId:'admin-order-submit',
+      errorId:'admin-order-error',
+      dialogId:'admin-order-dialog',
+      request:()=>api(`/orders/${change.id}/status`,{auth:true,method:'PATCH',body:JSON.stringify({status:change.status})}),
+      success:change.status==='PAID'?'Заказ отмечен оплаченным.':'Заказ отмечен отправленным.',
+      reload:()=>loadOrders(ordersPage),
+    });
+  });
+
   async function refresh(){
     if(refreshing||saving)return;
     refreshing=true;$('#admin-refresh').disabled=true;
     try{
       if(tab==='users')await loadUsers();
+      else if(tab==='orders')await loadOrders(ordersPage);
       else await loadCatalog();
     }finally{
       refreshing=false;$('#admin-refresh').disabled=false;
@@ -263,18 +345,22 @@ export function initAdmin({state,api,loadCatalog,esc,money,icon,empty,toast,open
       if(button.dataset.adminTab){
         tab=button.dataset.adminTab;$('#admin-search').value='';render();
         if(tab==='users')loadUsers();
+        if(tab==='orders')loadOrders(0);
       }
       if(button.id==='admin-create'){if(tab==='products')showProduct();else if(tab==='categories')showCategory();}
       if(button.dataset.adminEdit)showProduct(Number(button.dataset.adminEdit));
       if(button.dataset.adminDelete)showDelete(Number(button.dataset.adminDelete));
       if(button.dataset.adminRole)showRole(Number(button.dataset.adminRole));
+      if(button.dataset.adminOrderStatus)showOrderStatus(Number(button.dataset.adminOrderStatus));
+      if(button.dataset.ordersPage)loadOrders(Number(button.dataset.ordersPage));
       if(button.id==='admin-refresh'||button.hasAttribute('data-admin-retry'))refresh();
       if(button.hasAttribute('data-users-retry'))loadUsers();
+      if(button.hasAttribute('data-orders-retry'))loadOrders(ordersPage);
     }catch(error){toast(error.message);}
   });
 
   $('#admin-search').addEventListener('input',render);
-  for(const id of ['admin-product-dialog','admin-category-dialog','admin-delete-dialog','admin-role-dialog']){
+  for(const id of ['admin-product-dialog','admin-category-dialog','admin-delete-dialog','admin-role-dialog','admin-order-dialog']){
     const dialog=$('#'+id);
     dialog.addEventListener('cancel',event=>{if(saving)event.preventDefault();});
     dialog.addEventListener('click',event=>{if(saving&&event.target===dialog)event.stopImmediatePropagation();},true);

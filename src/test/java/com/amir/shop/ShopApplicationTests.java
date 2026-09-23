@@ -1,7 +1,10 @@
 package com.amir.shop;
 
+import com.amir.shop.entity.Order;
+import com.amir.shop.entity.OrderStatus;
 import com.amir.shop.entity.Role;
 import com.amir.shop.entity.User;
+import com.amir.shop.repository.OrderRepository;
 import com.amir.shop.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +17,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.postgresql.PostgreSQLContainer;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
@@ -35,6 +41,9 @@ class ShopApplicationTests {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private OrderRepository orderRepository;
 
     @Container
     @ServiceConnection
@@ -240,5 +249,158 @@ class ShopApplicationTests {
                 .orElseThrow();
 
         assertEquals(Role.OWNER, updatedUser.getRole());
+    }
+
+    @Test
+    void userCannotUpdateOrderStatus() throws Exception {
+
+        mockMvc.perform(
+                patch("/orders/{id}/status", 999)
+                        .with(jwt().authorities(
+                                new SimpleGrantedAuthority("ROLE_USER")
+        ))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                        {
+                          "status": "PAID"
+                        }
+                        """)
+        )
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void adminCanMarkNewOrderPaid() throws Exception {
+
+        Order order = new Order(
+
+                BigDecimal.ZERO,
+                new ArrayList<>()
+        );
+
+        order = orderRepository.save(order);
+
+        mockMvc.perform(
+                patch("/orders/{id}/status", order.getId())
+                        .with(jwt().authorities(
+                                new SimpleGrantedAuthority("ROLE_ADMIN")
+        ))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                        {
+                            "status": "PAID"
+                        }
+                        """)
+        )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("PAID"));
+
+        Order updatedOrder = orderRepository.findById(order.getId())
+                .orElseThrow();
+
+        assertEquals(OrderStatus.PAID, updatedOrder.getStatus());
+    }
+
+    @Test
+    void adminCanShipPaidOrder() throws Exception {
+
+        Order order = new Order(
+
+                BigDecimal.ZERO,
+                new ArrayList<>()
+        );
+
+        order.setStatus(OrderStatus.PAID);
+        order = orderRepository.save(order);
+
+        mockMvc.perform(
+                        patch("/orders/{id}/status", order.getId())
+                                .with(jwt().authorities(
+                                        new SimpleGrantedAuthority("ROLE_ADMIN")
+                                ))
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("""
+                        {
+                            "status": "SHIPPED"
+                        }
+                        """)
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("SHIPPED"));
+
+        Order updatedOrder = orderRepository.findById(order.getId())
+                .orElseThrow();
+
+        assertEquals(OrderStatus.SHIPPED, updatedOrder.getStatus());
+    }
+
+    @Test
+    void adminCannotShipNewOrder() throws Exception {
+
+        Order order = new Order(
+
+                BigDecimal.ZERO,
+                new ArrayList<>()
+        );
+
+        order = orderRepository.save(order);
+
+        mockMvc.perform(
+                patch("/orders/{id}/status", order.getId())
+                        .with(jwt().authorities(
+                                new SimpleGrantedAuthority("ROLE_ADMIN")
+                        ))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                        {
+                            "status": "SHIPPED"
+                        }
+                        """)
+        )
+                .andExpect(status().isConflict());
+
+        Order updatedOrder = orderRepository.findById(order.getId())
+                .orElseThrow();
+        assertEquals(OrderStatus.NEW, updatedOrder.getStatus());
+    }
+
+    @Test
+    void userCanViewOwnOrdersButNotAllOrders() throws Exception {
+
+        mockMvc.perform(
+                get("/orders/admin")
+                        .with(jwt().authorities(
+                                new SimpleGrantedAuthority("ROLE_USER")
+                        ))
+        )
+                .andExpect(status().isForbidden());
+
+        mockMvc.perform(
+                        get("/orders")
+                                .with(jwt().authorities(
+                                        new SimpleGrantedAuthority("ROLE_USER")
+                                ))
+                )
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void adminAndOwnerCanViewAllOrders() throws Exception {
+
+        mockMvc.perform(
+                        get("/orders/admin")
+                                .with(jwt().authorities(
+                                        new SimpleGrantedAuthority("ROLE_ADMIN")
+                                ))
+                )
+                .andExpect(status().isOk());
+
+        mockMvc.perform(
+                        get("/orders/admin")
+                                .with(jwt().authorities(
+                                        new SimpleGrantedAuthority("ROLE_OWNER")
+                                ))
+                )
+                .andExpect(status().isOk());
     }
 }

@@ -7,7 +7,7 @@ const root = path.resolve(fileURLToPath(new URL('./dist/', import.meta.url)));
 const port = Number(process.env.PORT || 3000);
 const backend = new URL(process.env.SHOP_API_URL || 'http://127.0.0.1:8080');
 const types = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8', '.svg': 'image/svg+xml', '.jpg': 'image/jpeg', '.png': 'image/png', '.webp': 'image/webp' };
-const allowedApi = /^\/(products(?:\/\d+|\/search|\/filter)?|categories|users(?:\/me|\/\d+(?:\/role)?)?|auth\/login|orders(?:\/\d+(?:\/cancel)?)?)$/;
+const allowedApi = /^\/(products(?:\/\d+|\/search|\/filter)?|categories|users(?:\/me|\/\d+(?:\/role)?)?|auth\/login|orders(?:\/admin|\/\d+(?:\/cancel|\/status)?)?)$/;
 
 export const server = http.createServer(async (req, res) => {
   res.setHeader('X-Content-Type-Options', 'nosniff');

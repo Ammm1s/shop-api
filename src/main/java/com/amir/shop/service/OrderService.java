@@ -1,9 +1,6 @@
 package com.amir.shop.service;
 
-import com.amir.shop.dto.OrderItemRequest;
-import com.amir.shop.dto.OrderItemResponse;
-import com.amir.shop.dto.OrderRequest;
-import com.amir.shop.dto.OrderResponse;
+import com.amir.shop.dto.*;
 import com.amir.shop.entity.*;
 import com.amir.shop.repository.OrderRepository;
 import com.amir.shop.repository.ProductRepository;
@@ -95,7 +92,9 @@ public class OrderService {
                     ));
 
             if (currentProduct.getStock() < quantity) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Недостаточно товара на складе");
+                throw new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST,
+                        "Недостаточно товара на складе");
         }
 
             OrderItem orderItem = new OrderItem();
@@ -196,5 +195,38 @@ public class OrderService {
         return orderRepository
                 .findByUser_Email(email, pageable)
                 .map(this::toResponse);
+    }
+
+    @Transactional
+    public OrderResponse updateStatus(Integer id, OrderStatus newStatus) {
+        Order order = orderRepository.findByIdForUpdate(id)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Заказ не найден"
+                ));
+
+        boolean allowed =
+                (order.getStatus() == OrderStatus.NEW &&
+                        newStatus == OrderStatus.PAID) ||
+                        (order.getStatus() == OrderStatus.PAID &&
+                                newStatus == OrderStatus.SHIPPED);
+
+        if (!allowed) {
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT,
+                    "Недопустимый переход статуса заказа"
+            );
+        }
+
+
+        order.setStatus(newStatus);
+        orderRepository.save(order);
+
+        return toResponse(order);
+    }
+
+    @Transactional
+    public Page<OrderResponse> getAllOrders(Pageable pageable) {
+        return orderRepository.findAll(pageable).map(this::toResponse);
     }
 }

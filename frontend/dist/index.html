@@ -35,11 +35,11 @@
     </section>
     <section id="orders-view" class="orders-view" hidden><div class="section-heading"><div><div class="eyebrow">ЛИЧНЫЙ КАБИНЕТ</div><h1>Мои заказы</h1></div><a class="secondary-button" href="#catalog">В каталог <span data-icon="arrow"></span></a></div><div id="orders-content"></div></section>
     <section id="admin-view" class="admin-view" hidden aria-labelledby="admin-title">
-      <div class="section-heading"><div><div class="eyebrow">УПРАВЛЕНИЕ МАГАЗИНОМ</div><h1 id="admin-title">Панель администратора</h1><p class="muted admin-intro">Товары, категории и остатки — в одном месте.</p></div><a class="secondary-button" href="#catalog">В магазин <span data-icon="arrow"></span></a></div>
+      <div class="section-heading"><div><div class="eyebrow">УПРАВЛЕНИЕ МАГАЗИНОМ</div><h1 id="admin-title">Панель администратора</h1><p class="muted admin-intro">Товары, заказы и остатки — в одном месте.</p></div><a class="secondary-button" href="#catalog">В магазин <span data-icon="arrow"></span></a></div>
       <div id="admin-access"></div>
       <div id="admin-workspace" hidden>
         <div id="admin-stats" class="admin-stats"></div>
-        <div class="admin-toolbar"><div class="admin-tabs" role="group" aria-label="Разделы управления"><button data-admin-tab="products" aria-pressed="true">Товары</button><button data-admin-tab="categories" aria-pressed="false">Категории</button><button id="admin-users-tab" data-admin-tab="users" aria-pressed="false" hidden>Пользователи</button></div><div class="admin-actions"><button id="admin-refresh" class="secondary-button">Обновить</button><button id="admin-create" class="primary-button"><span data-icon="plus"></span> Добавить товар</button></div></div>
+        <div class="admin-toolbar"><div class="admin-tabs" role="group" aria-label="Разделы управления"><button data-admin-tab="products" aria-pressed="true">Товары</button><button data-admin-tab="categories" aria-pressed="false">Категории</button><button data-admin-tab="orders" aria-pressed="false">Заказы</button><button id="admin-users-tab" data-admin-tab="users" aria-pressed="false" hidden>Пользователи</button></div><div class="admin-actions"><button id="admin-refresh" class="secondary-button">Обновить</button><button id="admin-create" class="primary-button"><span data-icon="plus"></span> Добавить товар</button></div></div>
         <label class="search admin-search"><span data-icon="search"></span><input id="admin-search" type="search" placeholder="Поиск по названию" aria-label="Поиск в панели администратора"></label>
         <div id="admin-list" aria-live="polite"></div>
       </div>
@@ -71,6 +71,7 @@
   </dialog>
   <dialog id="admin-delete-dialog" class="modal" aria-labelledby="admin-delete-title"><h2 id="admin-delete-title">Удалить товар?</h2><p id="admin-delete-description" class="muted"></p><p class="field-hint">Это действие нельзя отменить. Чтобы временно убрать товар из продажи, можно установить остаток 0.</p><p id="admin-delete-error" class="form-error" role="alert"></p><div class="confirm-buttons"><button class="secondary-button" data-close="admin-delete-dialog">Оставить</button><button id="admin-delete-submit" class="danger-button">Удалить товар</button></div></dialog>
   <dialog id="admin-role-dialog" class="modal" aria-labelledby="admin-role-title"><h2 id="admin-role-title">Изменить роль?</h2><p id="admin-role-description" class="muted"></p><p id="admin-role-hint" class="field-hint"></p><p id="admin-role-error" class="form-error" role="alert"></p><div class="confirm-buttons"><button class="secondary-button" data-close="admin-role-dialog">Отмена</button><button id="admin-role-submit" class="primary-button">Подтвердить</button></div></dialog>
+  <dialog id="admin-order-dialog" class="modal" aria-labelledby="admin-order-title"><h2 id="admin-order-title">Изменить статус заказа?</h2><p id="admin-order-description" class="muted"></p><p id="admin-order-hint" class="field-hint"></p><p id="admin-order-error" class="form-error" role="alert"></p><div class="confirm-buttons"><button class="secondary-button" data-close="admin-order-dialog">Отмена</button><button id="admin-order-submit" class="primary-button">Подтвердить</button></div></dialog>
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
 </body>
 </html>
