@@ -1,0 +1,12 @@
+# Run from Shop: docker compose -f compose.yaml -f frontend/compose.frontend.yaml up --build -d
+services:
+  frontend:
+    build:
+      context: ./frontend
+    environment:
+      SHOP_API_URL: http://app:8080
+    ports:
+      - "127.0.0.1:3000:3000"
+    depends_on:
+      app:
+        condition: service_started

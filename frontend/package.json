@@ -1,0 +1,14 @@
+{
+  "name": "shop-frontend",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node server.mjs",
+    "dev": "node server.mjs",
+    "check": "node --check server.mjs && node --check dist/app.js && node --check dist/admin.js"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

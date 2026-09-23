@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0c0d10">
+  <meta name="description" content="Shop — каталог товаров, личный кабинет и заказы.">
+  <title>Shop — технологии в твоём ритме</title>
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/style.css">
+  <script type="module" src="/app.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">К содержимому</a>
+  <div class="topline"><span>Твой день. Твои вещи. Твой ритм.</span><span>SHOP / EVERYDAY ESSENTIALS</span></div>
+  <header class="header shell">
+    <a href="#catalog" class="brand" aria-label="Shop — главная"><span class="brand-mark">s.</span>shop<span class="brand-dot">®</span></a>
+    <nav class="main-nav" aria-label="Основная навигация"><a href="#catalog" data-nav="catalog" class="active">Каталог</a><a href="#orders" data-nav="orders">Мои заказы</a><a href="#admin" id="admin-nav" data-nav="admin" hidden>Админ-панель</a></nav>
+    <div class="header-actions"><button id="account-button" class="account-button" type="button"><span data-icon="user"></span><span id="account-label">Войти</span></button><button id="cart-button" class="cart-button" type="button"><span data-icon="bag"></span><span>Корзина</span><b id="cart-count">0</b></button></div>
+  </header>
+  <main id="main" class="shell">
+    <section id="catalog-view">
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="hero-copy"><div class="eyebrow"><span class="tiny-line"></span> НА КАЖДЫЙ ДЕНЬ</div><h1 id="hero-title">Технологии.<br><span>В твоём ритме.</span></h1><p>Для работы, музыки и всего,<br>что делает день твоим.</p><a class="primary-button hero-cta" href="#products">Найти своё <span data-icon="arrow"></span></a></div>
+        <div class="hero-art"><img src="/assets/hero.jpg" alt="Беспроводные наушники в минималистичном дизайне" fetchpriority="high"><div class="hero-note"><span>МЕНЬШЕ ШУМА</span><strong>Больше твоей музыки.</strong></div></div><div class="hero-index">01 — EVERYDAY COLLECTION</div>
+      </section>
+      <section id="products" class="catalog" aria-labelledby="catalog-title">
+        <div class="section-heading"><div><div class="eyebrow">ВЫБИРАЙ ПОД СЕБЯ</div><h2 id="catalog-title">Каталог <span id="product-total"></span></h2></div><label class="search"><span data-icon="search"></span><input id="search" type="search" placeholder="Найти что-нибудь классное" aria-label="Поиск товаров"><kbd>/</kbd></label></div>
+        <div id="connection-notice" class="connection-notice" hidden></div>
+        <div class="catalog-toolbar"><div id="categories" class="categories" aria-label="Категории"></div><label class="sort"><span data-icon="sort"></span><select id="sort" aria-label="Сортировка"><option value="default">По умолчанию</option><option value="price-asc">Сначала дешевле</option><option value="price-desc">Сначала дороже</option><option value="name">По названию</option></select></label></div>
+        <div class="filter-row"><label class="stock-filter"><input type="checkbox" id="in-stock"> Только в наличии</label><button id="reset-filters" class="text-button" hidden>Сбросить фильтры</button><span id="result-count" class="muted"></span></div>
+        <div id="product-grid" class="product-grid" aria-live="polite"><div class="loading-card">Загружаем каталог…</div></div>
+      </section>
+      <section class="bottom-note"><span class="brand-mark">s.</span><div><h3>Хорошие вещи. Каждый день.</h3><p>Собери свой набор для работы и отдыха.</p></div><a href="#products" aria-label="Вернуться к каталогу"><span data-icon="arrow"></span></a></section>
+    </section>
+    <section id="orders-view" class="orders-view" hidden><div class="section-heading"><div><div class="eyebrow">ЛИЧНЫЙ КАБИНЕТ</div><h1>Мои заказы</h1></div><a class="secondary-button" href="#catalog">В каталог <span data-icon="arrow"></span></a></div><div id="orders-content"></div></section>
+    <section id="admin-view" class="admin-view" hidden aria-labelledby="admin-title">
+      <div class="section-heading"><div><div class="eyebrow">УПРАВЛЕНИЕ МАГАЗИНОМ</div><h1 id="admin-title">Панель администратора</h1><p class="muted admin-intro">Товары, категории и остатки — в одном месте.</p></div><a class="secondary-button" href="#catalog">В магазин <span data-icon="arrow"></span></a></div>
+      <div id="admin-access"></div>
+      <div id="admin-workspace" hidden>
+        <div id="admin-stats" class="admin-stats"></div>
+        <div class="admin-toolbar"><div class="admin-tabs" role="group" aria-label="Разделы управления"><button data-admin-tab="products" aria-pressed="true">Товары</button><button data-admin-tab="categories" aria-pressed="false">Категории</button><button id="admin-users-tab" data-admin-tab="users" aria-pressed="false" hidden>Пользователи</button></div><div class="admin-actions"><button id="admin-refresh" class="secondary-button">Обновить</button><button id="admin-create" class="primary-button"><span data-icon="plus"></span> Добавить товар</button></div></div>
+        <label class="search admin-search"><span data-icon="search"></span><input id="admin-search" type="search" placeholder="Поиск по названию" aria-label="Поиск в панели администратора"></label>
+        <div id="admin-list" aria-live="polite"></div>
+      </div>
+    </section>
+  </main>
+  <footer class="footer shell"><a class="brand" href="#catalog">shop<span class="brand-dot">®</span></a><span>Вещи, которые становятся частью дня.</span><span>© <span id="year"></span> Shop</span></footer>
+  <dialog id="auth-dialog" class="modal" aria-labelledby="auth-title"><button class="icon-button modal-close" data-close="auth-dialog" aria-label="Закрыть"><span data-icon="close"></span></button><div class="eyebrow">ТВОЙ SHOP</div><h2 id="auth-title">С возвращением.</h2><p id="auth-subtitle" class="muted">Войди, чтобы оформить заказ.</p><form id="auth-form"><label id="name-field" hidden>Имя<input id="auth-name" name="name" autocomplete="name" minlength="2" maxlength="50"></label><label>Email<input name="email" type="email" required autocomplete="email" placeholder="you@example.com"></label><label>Пароль<input id="auth-password" name="password" type="password" required autocomplete="current-password" placeholder="Твой пароль"></label><p id="auth-error" class="form-error" role="alert"></p><button class="primary-button full" id="auth-submit" type="submit">Войти <span data-icon="arrow"></span></button></form><div class="auth-switch"><span id="auth-switch-label">Пока нет аккаунта?</span> <button id="auth-switch" class="text-button">Создать</button></div></dialog>
+  <dialog id="cart-dialog" class="drawer" aria-labelledby="cart-title"><div class="drawer-heading"><div><div class="eyebrow">ТВОЙ ВЫБОР</div><h2 id="cart-title">Корзина <span id="drawer-count"></span></h2></div><button class="icon-button" data-close="cart-dialog" aria-label="Закрыть корзину"><span data-icon="close"></span></button></div><div id="cart-items" class="cart-items"></div><div id="cart-summary" class="cart-summary"></div></dialog>
+  <dialog id="product-dialog" class="modal product-modal"><button class="icon-button modal-close" data-close="product-dialog" aria-label="Закрыть"><span data-icon="close"></span></button><div id="product-detail"></div></dialog>
+  <dialog id="profile-dialog" class="modal"><button class="icon-button modal-close" data-close="profile-dialog" aria-label="Закрыть"><span data-icon="close"></span></button><div class="eyebrow">ЛИЧНЫЙ КАБИНЕТ</div><h2>Твой профиль</h2><div id="profile-content"></div><button id="logout" class="secondary-button full">Выйти из аккаунта</button></dialog>
+  <dialog id="confirm-dialog" class="modal"><h2>Отменить заказ?</h2><p class="muted">Товары вернутся на склад. Отменённый заказ нельзя восстановить.</p><div class="confirm-buttons"><button class="secondary-button" data-close="confirm-dialog">Оставить заказ</button><button id="confirm-cancel" class="primary-button">Отменить</button></div></dialog>
+  <dialog id="admin-product-dialog" class="modal admin-modal" aria-labelledby="admin-product-title">
+    <button class="icon-button modal-close" data-close="admin-product-dialog" aria-label="Закрыть"><span data-icon="close"></span></button>
+    <div class="eyebrow">КАТАЛОГ МАГАЗИНА</div><h2 id="admin-product-title">Добавить товар</h2>
+    <form id="admin-product-form">
+      <label>Название<input name="name" required maxlength="255" placeholder="Например, беспроводные наушники"></label>
+      <label>Категория<select name="categoryId" required></select></label><p id="admin-category-hint" class="field-hint"></p>
+      <label>Описание<textarea name="description" rows="3" placeholder="Что стоит знать о товаре"></textarea></label>
+      <label>Ссылка на изображение<input name="imageUrl" type="url" maxlength="255" pattern="https://.*" placeholder="https://example.com/product.jpg" aria-describedby="product-image-hint"></label>
+      <p id="product-image-hint" class="field-hint">Необязательно. Укажи прямую HTTPS-ссылку на картинку (до 255 символов). Чтобы убрать изображение, очисти поле.</p>
+      <div class="form-columns"><label>Цена, ₽<input name="price" type="number" required min="0.01" step="0.01" placeholder="4990"></label><label>Остаток, шт.<input name="stock" type="number" required min="0" max="2147483647" step="1" value="0"></label></div>
+      <p id="admin-product-error" class="form-error" role="alert"></p><button id="admin-product-submit" type="submit" class="primary-button full">Добавить товар</button>
+    </form>
+  </dialog>
+  <dialog id="admin-category-dialog" class="modal" aria-labelledby="admin-category-title">
+    <button class="icon-button modal-close" data-close="admin-category-dialog" aria-label="Закрыть"><span data-icon="close"></span></button>
+    <div class="eyebrow">ОРГАНИЗАЦИЯ КАТАЛОГА</div><h2 id="admin-category-title">Новая категория</h2>
+    <form id="admin-category-form"><label>Название<input name="name" required maxlength="255" placeholder="Например, электроника"></label><label>Описание<textarea name="description" rows="3" placeholder="Какие товары здесь будут"></textarea></label><p id="admin-category-error" class="form-error" role="alert"></p><button id="admin-category-submit" type="submit" class="primary-button full">Создать категорию</button></form>
+  </dialog>
+  <dialog id="admin-delete-dialog" class="modal" aria-labelledby="admin-delete-title"><h2 id="admin-delete-title">Удалить товар?</h2><p id="admin-delete-description" class="muted"></p><p class="field-hint">Это действие нельзя отменить. Чтобы временно убрать товар из продажи, можно установить остаток 0.</p><p id="admin-delete-error" class="form-error" role="alert"></p><div class="confirm-buttons"><button class="secondary-button" data-close="admin-delete-dialog">Оставить</button><button id="admin-delete-submit" class="danger-button">Удалить товар</button></div></dialog>
+  <dialog id="admin-role-dialog" class="modal" aria-labelledby="admin-role-title"><h2 id="admin-role-title">Изменить роль?</h2><p id="admin-role-description" class="muted"></p><p id="admin-role-hint" class="field-hint"></p><p id="admin-role-error" class="form-error" role="alert"></p><div class="confirm-buttons"><button class="secondary-button" data-close="admin-role-dialog">Отмена</button><button id="admin-role-submit" class="primary-button">Подтвердить</button></div></dialog>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+</body>
+</html>
